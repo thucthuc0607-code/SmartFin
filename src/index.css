@@ -1,0 +1,187 @@
+/* 1. NHẬP FONT CHỮ HIỆN ĐẠI (Giống Apple San Francisco) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. CẤU HÌNH GIAO DIỆN CHÍNH */
+body {
+  font-family: 'Inter', sans-serif !important; /* Áp dụng Font mới */
+  background-color: #000000;
+  /* Nền vũ trụ tối giản */
+  background-image: radial-gradient(
+      circle at 50% 0%,
+      #1e1b4b 0%,
+      transparent 60%
+    ),
+    radial-gradient(circle at 100% 0%, #312e81 0%, transparent 50%);
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased; /* Làm mượt chữ */
+}
+
+/* 3. HIỆU ỨNG KÍNH (GLASSMORPHISM) CAO CẤP */
+.bg-white,
+.bg-gray-50,
+.bg-slate-50,
+.card {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 4. SỬA LỖI CHỮ (Ép tất cả chữ phải sáng và rõ) */
+
+/* Chữ tiêu đề to (SmartFin...) */
+h1,
+h2,
+h3,
+.text-xl,
+.text-2xl,
+.text-3xl {
+  color: #ffffff !important;
+  font-weight: 700 !important; /* Đậm đà hơn */
+  letter-spacing: -0.5px; /* Dồn chữ lại cho giống Apple */
+}
+
+/* Chữ nội dung thường */
+p,
+span,
+div,
+li {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Chữ phụ (Mô tả nhỏ, ngày tháng) - Ép sáng lên */
+.text-gray-500,
+.text-gray-400,
+.text-slate-500 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* 5. NÚT BẤM & ICON */
+button.bg-blue-600,
+.bg-blue-500 {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+  border: none !important;
+}
+
+/* Input nhập liệu */
+input,
+select {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+/* --- SỬA LỖI MENU DƯỚI CÙNG (BOTTOM BAR FIX) --- */
+
+/* 1. Làm nền thanh menu đẹp hơn (trong suốt như kính) */
+.fixed.bottom-0 {
+  background-color: rgba(0, 0, 0, 0.6) !important; /* Đen trong suốt */
+  backdrop-filter: blur(20px) !important; /* Làm mờ nền sau */
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important; /* Viền sáng mảnh bên trên */
+  padding-bottom: 15px; /* Đẩy lên một chút cho thoáng */
+}
+
+/* 2. Cấu hình chung cho ICON menu (To hơn, Dày hơn) */
+.fixed.bottom-0 button svg {
+  width: 28px !important; /* Phóng to icon */
+  height: 28px !important;
+  stroke-width: 2.5px !important; /* Làm nét dày lên gấp đôi */
+  transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt */
+}
+
+/* 3. Icon ĐANG CHỌN (Active) - Màu xanh Neon rực rỡ */
+/* Tìm các nút có class màu xanh (thường là tab đang mở) */
+.fixed.bottom-0 button[class*='text-blue'] svg {
+  color: #38bdf8 !important; /* Xanh dương sáng */
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8)); /* Phát sáng Neon */
+  transform: translateY(-5px); /* Bay lên nhẹ 1 chút để báo hiệu */
+}
+
+/* 4. Icon CHƯA CHỌN (Inactive) - Màu trắng xám rõ nét */
+.fixed.bottom-0 button:not([class*='text-blue']) svg {
+  color: #cbd5e1 !important; /* Trắng xám (rất sáng) */
+  opacity: 1 !important; /* Không cho mờ nữa */
+}
+/* --- CẤP CỨU MENU DƯỚI CÙNG (PHIÊN BẢN SIÊU SÁNG) --- */
+
+/* 1. Xử lý nền thanh Menu cho nổi bật hẳn lên */
+.fixed.bottom-0 {
+  background-color: #0f172a !important; /* Nền xanh đen đậm đặc */
+  border-top: 1px solid rgba(255, 255, 255, 0.3) !important; /* Viền trên sáng rõ */
+  padding-bottom: 20px !important; /* Tăng khoảng cách đáy */
+  z-index: 9999; /* Đảm bảo luôn nằm trên cùng */
+}
+
+/* 2. ÉP TẤT CẢ ICON CHƯA CHỌN PHẢI MÀU TRẮNG (Quan trọng nhất) */
+/* Bất kể code gốc set màu gì, ở đây ép thành TRẮNG SÁNG hết */
+.fixed.bottom-0 button:not([class*='text-blue']) svg {
+  color: #ffffff !important; /* Trắng tinh */
+  stroke: #ffffff !important; /* Viền trắng */
+  opacity: 1 !important; /* Không được mờ */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)); /* Bóng đổ nhẹ cho nổi */
+}
+
+/* 3. ICON ĐANG CHỌN (Màu xanh Neon) */
+.fixed.bottom-0 button[class*='text-blue'] svg {
+  color: #38bdf8 !important; /* Xanh dương sáng */
+  stroke: #38bdf8 !important;
+  filter: drop-shadow(0 0 10px #38bdf8); /* Phát sáng rực rỡ */
+  transform: scale(1.1); /* Phóng to nhẹ */
+}
+
+/* 4. Tăng kích thước vùng bấm cho dễ bấm */
+.fixed.bottom-0 button {
+  padding: 10px 0;
+}
+/* ============================================== */
+/* KHẮC PHỤC DỨT ĐIỂM LỖI ICON MỜ (ULTIMATE FIX) */
+/* ============================================== */
+
+/* 1. Ép tất cả ICON trong thanh Menu dưới cùng thành MÀU TRẮNG */
+.fixed.bottom-0 button svg {
+  color: #ffffff !important; /* Trắng tinh */
+  stroke: #ffffff !important; /* Viền trắng */
+  opacity: 1 !important; /* Rõ nét 100%, không mờ đục */
+  filter: drop-shadow(
+    0 0 2px rgba(255, 255, 255, 0.5)
+  ); /* Phát sáng nhẹ cho dễ thấy */
+  width: 26px !important; /* To hơn chút nữa */
+  height: 26px !important;
+}
+
+/* 2. Riêng Icon đang chọn (Màu xanh) thì giữ nguyên màu xanh */
+/* Tìm nút nào có class chứa chữ 'blue' thì tô lại màu xanh */
+.fixed.bottom-0 button[class*='blue'] svg,
+.fixed.bottom-0 button[class*='text-blue'] svg {
+  color: #38bdf8 !important; /* Xanh Neon */
+  stroke: #38bdf8 !important;
+  filter: drop-shadow(0 0 8px #38bdf8) !important; /* Phát sáng mạnh */
+}
+
+/* 3. TIỆN TAY: Làm sáng luôn cái thùng rác (nút Xóa) đang bị tối */
+button .lucide-trash,
+button .lucide-trash-2 {
+  color: #ef4444 !important; /* Màu đỏ sáng */
+  stroke: #ef4444 !important;
+  opacity: 0.9 !important;
+}
+/* --- SỬA LỖI THANH MENU (PHIÊN BẢN CHUẨN BOTTOM-8) --- */
+
+/* Tìm đúng cái thanh menu có class 'fixed bottom-8' */
+.fixed.bottom-8 svg {
+  color: #ffffff !important; /* Trắng tinh */
+  stroke: #ffffff !important;
+  opacity: 1 !important; /* Xóa mờ */
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* Phát sáng */
+}
+
+/* Giữ nguyên màu xanh cho nút đang chọn */
+.fixed.bottom-8 button[class*='text-blue'] svg {
+  color: #3b82f6 !important;
+  stroke: #3b82f6 !important;
+}
