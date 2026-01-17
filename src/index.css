@@ -1,187 +1,268 @@
 /* 1. NHẬP FONT CHỮ HIỆN ĐẠI (Giống Apple San Francisco) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 2. CẤU HÌNH GIAO DIỆN CHÍNH */
+/* 2. BIẾN MÀU THEME */
+:root {
+  --bg-gradient-start: #1a1b3d;
+  --bg-gradient-end: #2d1b4e;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="light"] {
+  --bg-gradient-start: #e0e7ff;
+  --bg-gradient-end: #f3e8ff;
+  --glass-bg: rgba(255, 255, 255, 0.95);  /* Sửa 0.7 thành 0.95 để nền đục hơn, dễ đọc chữ */
+  --glass-border: rgba(255, 255, 255, 1); /* Viền trắng rõ nét */
+  --text-primary: #000000;                /* Đổi thành ĐEN TUYỆT ĐỐI */
+  --text-secondary: #000000;              /* Đen tuyền cho các chữ phụ */
+  --text-tertiary: #333333;               /* Xám đậm dễ đọc */
+}
+
+/* 3. BACKGROUND GRADIENT ANIMATED (Deep Blue & Purple) */
 body {
-  font-family: 'Inter', sans-serif !important; /* Áp dụng Font mới */
-  background-color: #000000;
-  /* Nền vũ trụ tối giản */
-  background-image: radial-gradient(
-      circle at 50% 0%,
-      #1e1b4b 0%,
-      transparent 60%
-    ),
-    radial-gradient(circle at 100% 0%, #312e81 0%, transparent 50%);
-  color: #ffffff;
-  -webkit-font-smoothing: antialiased; /* Làm mượt chữ */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 3. HIỆU ỨNG KÍNH (GLASSMORPHISM) CAO CẤP */
-.bg-white,
-.bg-gray-50,
-.bg-slate-50,
-.card {
-  background-color: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(79, 70, 229, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  animation: gradientShift 20s ease infinite;
+  z-index: -1;
 }
 
-/* 4. SỬA LỖI CHỮ (Ép tất cả chữ phải sáng và rõ) */
-
-/* Chữ tiêu đề to (SmartFin...) */
-h1,
-h2,
-h3,
-.text-xl,
-.text-2xl,
-.text-3xl {
-  color: #ffffff !important;
-  font-weight: 700 !important; /* Đậm đà hơn */
-  letter-spacing: -0.5px; /* Dồn chữ lại cho giống Apple */
+[data-theme="light"] body::before {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
 }
 
-/* Chữ nội dung thường */
-p,
-span,
-div,
-li {
-  color: rgba(255, 255, 255, 0.9) !important;
+/* Ensure root element also has background */
+#root {
+  min-height: 100vh;
+  position: relative;
+  z-index: 0;
 }
 
-/* Chữ phụ (Mô tả nhỏ, ngày tháng) - Ép sáng lên */
-.text-gray-500,
-.text-gray-400,
-.text-slate-500 {
-  color: rgba(255, 255, 255, 0.6) !important;
+@keyframes gradientShift {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-5%, -5%) scale(1.1);
+  }
+  66% {
+    transform: translate(5%, 5%) scale(0.9);
+  }
 }
 
-/* 5. NÚT BẤM & ICON */
-button.bg-blue-600,
-.bg-blue-500 {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-  border: none !important;
+/* 4. GLASSMORPHISM UTILITY CLASSES */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
 }
 
-/* Input nhập liệu */
-input,
-select {
-  background-color: rgba(0, 0, 0, 0.3) !important;
-  color: white !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-/* --- SỬA LỖI MENU DƯỚI CÙNG (BOTTOM BAR FIX) --- */
-
-/* 1. Làm nền thanh menu đẹp hơn (trong suốt như kính) */
-.fixed.bottom-0 {
-  background-color: rgba(0, 0, 0, 0.6) !important; /* Đen trong suốt */
-  backdrop-filter: blur(20px) !important; /* Làm mờ nền sau */
-  border-top: 1px solid rgba(255, 255, 255, 0.15) !important; /* Viền sáng mảnh bên trên */
-  padding-bottom: 15px; /* Đẩy lên một chút cho thoáng */
+.glass-card-dark {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
-/* 2. Cấu hình chung cho ICON menu (To hơn, Dày hơn) */
-.fixed.bottom-0 button svg {
-  width: 28px !important; /* Phóng to icon */
-  height: 28px !important;
-  stroke-width: 2.5px !important; /* Làm nét dày lên gấp đôi */
-  transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt */
+.glass-button {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-/* 3. Icon ĐANG CHỌN (Active) - Màu xanh Neon rực rỡ */
-/* Tìm các nút có class màu xanh (thường là tab đang mở) */
-.fixed.bottom-0 button[class*='text-blue'] svg {
-  color: #38bdf8 !important; /* Xanh dương sáng */
-  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8)); /* Phát sáng Neon */
-  transform: translateY(-5px); /* Bay lên nhẹ 1 chút để báo hiệu */
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-/* 4. Icon CHƯA CHỌN (Inactive) - Màu trắng xám rõ nét */
-.fixed.bottom-0 button:not([class*='text-blue']) svg {
-  color: #cbd5e1 !important; /* Trắng xám (rất sáng) */
-  opacity: 1 !important; /* Không cho mờ nữa */
-}
-/* --- CẤP CỨU MENU DƯỚI CÙNG (PHIÊN BẢN SIÊU SÁNG) --- */
-
-/* 1. Xử lý nền thanh Menu cho nổi bật hẳn lên */
-.fixed.bottom-0 {
-  background-color: #0f172a !important; /* Nền xanh đen đậm đặc */
-  border-top: 1px solid rgba(255, 255, 255, 0.3) !important; /* Viền trên sáng rõ */
-  padding-bottom: 20px !important; /* Tăng khoảng cách đáy */
-  z-index: 9999; /* Đảm bảo luôn nằm trên cùng */
+.glass-input {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
 }
 
-/* 2. ÉP TẤT CẢ ICON CHƯA CHỌN PHẢI MÀU TRẮNG (Quan trọng nhất) */
-/* Bất kể code gốc set màu gì, ở đây ép thành TRẮNG SÁNG hết */
-.fixed.bottom-0 button:not([class*='text-blue']) svg {
-  color: #ffffff !important; /* Trắng tinh */
-  stroke: #ffffff !important; /* Viền trắng */
-  opacity: 1 !important; /* Không được mờ */
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)); /* Bóng đổ nhẹ cho nổi */
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
-/* 3. ICON ĐANG CHỌN (Màu xanh Neon) */
-.fixed.bottom-0 button[class*='text-blue'] svg {
-  color: #38bdf8 !important; /* Xanh dương sáng */
-  stroke: #38bdf8 !important;
-  filter: drop-shadow(0 0 10px #38bdf8); /* Phát sáng rực rỡ */
-  transform: scale(1.1); /* Phóng to nhẹ */
+/* 5. TEXT STYLING */
+body {
+  color: var(--text-primary);
 }
 
-/* 4. Tăng kích thước vùng bấm cho dễ bấm */
-.fixed.bottom-0 button {
-  padding: 10px 0;
-}
-/* ============================================== */
-/* KHẮC PHỤC DỨT ĐIỂM LỖI ICON MỜ (ULTIMATE FIX) */
-/* ============================================== */
-
-/* 1. Ép tất cả ICON trong thanh Menu dưới cùng thành MÀU TRẮNG */
-.fixed.bottom-0 button svg {
-  color: #ffffff !important; /* Trắng tinh */
-  stroke: #ffffff !important; /* Viền trắng */
-  opacity: 1 !important; /* Rõ nét 100%, không mờ đục */
-  filter: drop-shadow(
-    0 0 2px rgba(255, 255, 255, 0.5)
-  ); /* Phát sáng nhẹ cho dễ thấy */
-  width: 26px !important; /* To hơn chút nữa */
-  height: 26px !important;
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.5px;
 }
 
-/* 2. Riêng Icon đang chọn (Màu xanh) thì giữ nguyên màu xanh */
-/* Tìm nút nào có class chứa chữ 'blue' thì tô lại màu xanh */
-.fixed.bottom-0 button[class*='blue'] svg,
-.fixed.bottom-0 button[class*='text-blue'] svg {
-  color: #38bdf8 !important; /* Xanh Neon */
-  stroke: #38bdf8 !important;
-  filter: drop-shadow(0 0 8px #38bdf8) !important; /* Phát sáng mạnh */
+p, span, div, li {
+  color: var(--text-secondary) !important;
 }
 
-/* 3. TIỆN TAY: Làm sáng luôn cái thùng rác (nút Xóa) đang bị tối */
-button .lucide-trash,
-button .lucide-trash-2 {
-  color: #ef4444 !important; /* Màu đỏ sáng */
-  stroke: #ef4444 !important;
-  opacity: 0.9 !important;
-}
-/* --- SỬA LỖI THANH MENU (PHIÊN BẢN CHUẨN BOTTOM-8) --- */
-
-/* Tìm đúng cái thanh menu có class 'fixed bottom-8' */
-.fixed.bottom-8 svg {
-  color: #ffffff !important; /* Trắng tinh */
-  stroke: #ffffff !important;
-  opacity: 1 !important; /* Xóa mờ */
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* Phát sáng */
+.text-muted {
+  color: var(--text-tertiary) !important;
 }
 
-/* Giữ nguyên màu xanh cho nút đang chọn */
-.fixed.bottom-8 button[class*='text-blue'] svg {
-  color: #3b82f6 !important;
-  stroke: #3b82f6 !important;
+/* 6. LEGACY CLASSES COMPATIBILITY */
+.liquid-glass {
+  @apply glass-card;
+}
+
+.liquid-glass-dark {
+  @apply glass-card-dark;
+}
+
+.tab-blur {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 7. SCROLLBAR STYLING */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 8. ANIMATIONS */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in-from-bottom-6 {
+  animation: slideInFromBottom 0.7s ease-out;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* 9. BOTTOM NAVIGATION BAR - FLOATING PILL (Removed old styles - now using inline styles) */
+
+/* 10. LARGE TITLE STYLING */
+.large-title {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--text-primary) !important;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="light"] .large-title {
+  background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}/* =======================================================
+   FIX LỖI HIỂN THỊ LIGHT MODE (Dán vào cuối file index.css)
+   ======================================================= */
+
+/* 1. Ép màu chữ ĐEN cho tất cả ô nhập liệu và bảng chọn */
+[data-theme="light"] input, 
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+    color: #000000 !important;           /* Chữ đen tuyền */
+    background: #ffffff !important; /* Nền trắng đục dễ nhìn */
+    border: 1px solid #d1d5db !important; /* Viền xám rõ ràng */
+}
+
+/* 2. Làm rõ các dòng chữ mờ (Placeholder) ví dụ: "0 đ", "Ghi chú..." */
+[data-theme="light"] ::placeholder {
+    color: #555555 !important;
+    opacity: 1 !important;
+}
+
+/* 3. Xử lý các nút Tab (Thủ công / AI Scan) bị mờ */
+[data-theme="light"] button {
+    text-shadow: none !important; /* Bỏ bóng mờ nếu có */
+}
+
+/* Ép các chữ đang bị set cứng màu trắng (text-white) thành màu đen */
+[data-theme="light"] .text-white {
+    color: #1f2937 !important; /* Màu xám đen đậm */
+}
+
+/* Giữ nguyên màu chữ trắng cho các nút ĐẶC BIỆT (Nút Lưu xanh dương, nút Xóa đỏ) */
+[data-theme="light"] button.bg-blue-500,
+[data-theme="light"] button.bg-blue-600,
+[data-theme="light"] button.bg-green-500,
+[data-theme="light"] button.bg-red-500 {
+    color: #ffffff !important;
 }

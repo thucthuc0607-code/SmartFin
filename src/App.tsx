@@ -82,12 +82,15 @@ export const CATEGORIES: Category[] = [
 // 3. SERVICES (Gộp từ services/geminiService.ts)
 // ==========================================
 
-const API_KEY = process.env.API_KEY || '';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
+    if (!API_KEY) {
+      throw new Error("VITE_GEMINI_API_KEY is not defined in the environment variables.");
+    }
     this.ai = new GoogleGenAI({ apiKey: API_KEY });
   }
 
@@ -177,7 +180,7 @@ const TransactionItem: React.FC<{
 }> = ({ transaction, category, onDelete }) => {
   return (
     <div className="flex items-center justify-between py-4 group px-2 hover:bg-white/20 rounded-2xl transition-all duration-300">
-      <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4">
         <div
           className={`w-12 h-12 flex items-center justify-center rounded-2xl text-xl shadow-inner ${
             category?.color || 'bg-white/40'
@@ -186,10 +189,10 @@ const TransactionItem: React.FC<{
           {category?.icon || '❓'}
         </div>
         <div>
-          <h4 className="font-bold text-[17px] text-[#1C1C1E] leading-none mb-1">
+          <h4 className="font-bold text-[17px] text-white leading-none mb-1">
             {category?.name || 'Khác'}
           </h4>
-          <p className="text-[13px] text-[#3A3A3C] font-medium opacity-60 line-clamp-1">
+          <p className="text-[13px] text-white/60 font-medium line-clamp-1">
             {transaction.note || 'Giao dịch không tên'}
           </p>
         </div>
@@ -198,8 +201,8 @@ const TransactionItem: React.FC<{
         <span
           className={`font-extrabold text-[17px] tracking-tight ${
             transaction.type === TransactionType.INCOME
-              ? 'text-[#248A3D]'
-              : 'text-[#1C1C1E]'
+              ? 'text-[#34C759]'
+              : 'text-white'
           }`}
         >
           {transaction.type === TransactionType.INCOME ? '+' : ''}
@@ -264,7 +267,7 @@ const StatsOverview: React.FC<{
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {/* Card 1: Hôm nay */}
-      <div className="liquid-glass p-5 rounded-[24px] flex flex-col justify-between h-[110px] relative overflow-hidden group">
+      <div className="glass-card p-5 flex flex-col justify-between h-[110px] relative overflow-hidden group">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-8 h-8 rounded-full bg-[#FF3B30]/10 flex items-center justify-center text-[#FF3B30]">
             <svg
@@ -280,7 +283,7 @@ const StatsOverview: React.FC<{
               <path d="M12 5v14M5 12h14" />
             </svg>
           </div>
-          <span className="text-[12px] font-bold text-[#3A3A3C] opacity-60 uppercase tracking-wide">
+          <span className="text-[12px] font-bold text-white/60 uppercase tracking-wide">
             Hôm nay
           </span>
         </div>
@@ -292,7 +295,7 @@ const StatsOverview: React.FC<{
       {/* Card 2: Ngân sách */}
       <div
         onClick={onOpenBudgetModal}
-        className="liquid-glass p-5 rounded-[24px] flex flex-col justify-between h-[110px] cursor-pointer hover:bg-white/50 transition-all relative group"
+        className="glass-card p-5 flex flex-col justify-between h-[110px] cursor-pointer hover:bg-white/20 transition-all relative group"
       >
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
@@ -312,7 +315,7 @@ const StatsOverview: React.FC<{
                 <circle cx="12" cy="12" r="2" />
               </svg>
             </div>
-            <span className="text-[12px] font-bold text-[#3A3A3C] opacity-60 uppercase tracking-wide">
+            <span className="text-[12px] font-bold text-white/60 uppercase tracking-wide">
               Vốn tháng
             </span>
           </div>
@@ -336,7 +339,7 @@ const StatsOverview: React.FC<{
       </div>
 
       {/* Card 3: Đã tiêu */}
-      <div className="liquid-glass p-5 rounded-[24px] flex flex-col justify-between h-[110px]">
+      <div className="glass-card p-5 flex flex-col justify-between h-[110px]">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-black/70">
             <svg
@@ -355,19 +358,19 @@ const StatsOverview: React.FC<{
               <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
           </div>
-          <span className="text-[12px] font-bold text-[#3A3A3C] opacity-60 uppercase tracking-wide">
+          <span className="text-[12px] font-bold text-white/60 uppercase tracking-wide">
             Đã tiêu
           </span>
         </div>
-        <p className="text-[22px] font-black text-[#1C1C1E] tracking-tight">
+        <p className="text-[22px] font-black text-white tracking-tight">
           -{formatShort(currentMonthExpense)}
         </p>
       </div>
 
       {/* Card 4: Còn lại */}
       <div
-        className={`liquid-glass p-5 rounded-[24px] flex flex-col justify-between h-[110px] relative overflow-hidden transition-all duration-500 ${
-          isLowBalance ? 'ring-2 ring-red-500/50 bg-red-50/10' : ''
+        className={`glass-card p-5 flex flex-col justify-between h-[110px] relative overflow-hidden transition-all duration-500 ${
+          isLowBalance ? 'ring-2 ring-red-500/50 bg-red-500/10' : ''
         }`}
       >
         <div className="flex items-center justify-between gap-2 mb-1">
@@ -392,7 +395,7 @@ const StatsOverview: React.FC<{
                 <path d="M19 5c-1.5 0-2.8 0.6-3.8 1.5l-2.5 2.5-3.2-3.2a1.5 1.5 0 0 0-2.1 0L4.9 8.3a1.5 1.5 0 0 0 0 2.1l5.3 5.3c0.6 0.6 1.5 0.6 2.1 0l6.7-6.7c1.5-1.5 2.5-3 2-4.5s-2.1-2.1-2-2.1z" />
               </svg>
             </div>
-            <span className="text-[12px] font-bold text-[#3A3A3C] opacity-60 uppercase tracking-wide">
+            <span className="text-[12px] font-bold text-white/60 uppercase tracking-wide">
               Còn lại
             </span>
           </div>
@@ -507,7 +510,7 @@ const ChartSection: React.FC<{
       legend: {
         labels: {
           font: { family: "'Inter', sans-serif", size: 11 },
-          color: '#3A3A3C',
+          color: 'rgba(255, 255, 255, 0.9)',
           usePointStyle: true,
         },
       },
@@ -521,22 +524,25 @@ const ChartSection: React.FC<{
       x: {
         grid: { display: false },
         ticks: {
-          color: '#8E8E93',
+          color: 'rgba(255, 255, 255, 0.6)',
           font: { family: "'Inter', sans-serif", size: 10 },
         },
       },
       y: {
-        grid: { color: 'rgba(0,0,0,0.05)', borderDash: [4, 4] },
+        grid: { color: 'rgba(255, 255, 255, 0.1)', borderDash: [4, 4] },
         border: { display: false },
-        ticks: { display: false },
+        ticks: { 
+          display: false,
+          color: 'rgba(255, 255, 255, 0.6)',
+        },
       },
     },
   };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      <div className="liquid-glass p-6 rounded-[32px] flex flex-col">
-        <h3 className="text-[18px] font-extrabold text-[#1C1C1E] mb-4 text-center">
+      <div className="glass-card p-6 flex flex-col">
+        <h3 className="text-[18px] font-extrabold text-white mb-4 text-center">
           Phân bổ chi tiêu
         </h3>
         <div className="flex-1 min-h-[250px] relative">
@@ -555,14 +561,14 @@ const ChartSection: React.FC<{
               }}
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-slate-400 italic font-medium">
+            <div className="absolute inset-0 flex items-center justify-center text-white/40 italic font-medium">
               Chưa có dữ liệu
             </div>
           )}
         </div>
       </div>
-      <div className="liquid-glass p-6 rounded-[32px] flex flex-col">
-        <h3 className="text-[18px] font-extrabold text-[#1C1C1E] mb-4 text-center">
+      <div className="glass-card p-6 flex flex-col">
+        <h3 className="text-[18px] font-extrabold text-white mb-4 text-center">
           7 ngày gần nhất
         </h3>
         <div className="flex-1 min-h-[250px] relative">
@@ -607,7 +613,7 @@ const CalendarView: React.FC<{ transactions: Transaction[] }> = ({
   const weekDays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 
   return (
-    <div className="liquid-glass-dark p-5 rounded-[32px] border border-white/20">
+    <div className="glass-card-dark p-5 border border-white/20">
       <div className="flex justify-between items-center mb-6">
         <h3 className="font-bold text-[18px] text-white">
           Tháng {currentMonth + 1}, {currentYear}
@@ -667,6 +673,22 @@ const CalendarView: React.FC<{ transactions: Transaction[] }> = ({
 // ==========================================
 
 const App: React.FC = () => {
+  // Theme state - Load from localStorage or default to 'dark'
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const savedTheme = localStorage.getItem('smartfin-theme');
+    return (savedTheme as 'dark' | 'light') || 'dark';
+  });
+
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('smartfin-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [budgetConfig, setBudgetConfig] = useState<BudgetConfig>({
     cash: 0,
@@ -1220,7 +1242,7 @@ const App: React.FC = () => {
       {/* Warning Toast */}
       {showWarningToast && (
         <div className="fixed top-24 left-4 right-4 z-50 animate-in slide-in-from-top-4 fade-in duration-500">
-          <div className="liquid-glass-dark p-4 rounded-2xl border-l-4 border-red-500 shadow-2xl flex items-center justify-between">
+          <div className="glass-card-dark p-4 border-l-4 border-red-500 shadow-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center animate-pulse">
                 <svg
@@ -1273,26 +1295,74 @@ const App: React.FC = () => {
       <div className="sticky top-0 z-40 px-6 pt-12 pb-4 tab-blur">
         <div className="flex items-center justify-between">
           <h1 className="large-title">SmartFin</h1>
-          <button
-            onClick={() => {
-              setInputMode('manual');
-              setIsModalOpen(true);
-            }}
-            className="w-12 h-12 rounded-2xl bg-[#007AFF] text-white shadow-xl shadow-blue-500/40 flex items-center justify-center active:scale-90 transition-all border border-white/30"
-          >
-            <svg
-              width="26"
-              height="26"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="w-12 h-12 rounded-2xl glass-button flex items-center justify-center active:scale-90 transition-all text-white hover:bg-white/20"
+              title={theme === 'dark' ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
             >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </button>
+              {theme === 'dark' ? (
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              ) : (
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
+            {/* Add Transaction Button */}
+            <button
+              onClick={() => {
+                setInputMode('manual');
+                setIsModalOpen(true);
+              }}
+              className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#007AFF] to-[#5856D6] text-white shadow-xl shadow-blue-500/40 flex items-center justify-center active:scale-90 transition-all border border-white/30 hover:shadow-blue-500/60"
+              style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
+            >
+              <svg
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="drop-shadow-none"
+                style={{ filter: 'none', opacity: 1, color: '#FFFFFF' }}
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1305,9 +1375,9 @@ const App: React.FC = () => {
               onOpenBudgetModal={openBudgetModal}
             />
             <ChartSection transactions={transactions} categories={CATEGORIES} />
-            <div className="liquid-glass p-6 rounded-[32px] mb-8">
+            <div className="glass-card p-6 mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-extrabold text-[20px] text-[#1C1C1E]">
+                <h3 className="font-extrabold text-[20px] text-white">
                   Hoạt động
                 </h3>
                 <button
@@ -1327,7 +1397,7 @@ const App: React.FC = () => {
                   />
                 ))}
                 {transactions.length === 0 && (
-                  <p className="text-center py-6 text-slate-400 font-medium italic">
+                  <p className="text-center py-6 text-white/40 font-medium italic">
                     Bắt đầu bằng cách thêm chi tiêu
                   </p>
                 )}
@@ -1339,7 +1409,7 @@ const App: React.FC = () => {
         {activeTab === 'history' && (
           <div className="animate-in fade-in slide-in-from-right-10 duration-500">
             {/* 1. SMART INPUT */}
-            <div className="liquid-glass-dark p-2 rounded-[24px] mb-4 flex gap-2 border border-white/20 shadow-lg relative z-40">
+            <div className="glass-card-dark p-2 mb-4 flex gap-2 border border-white/20 shadow-lg relative z-40">
               <form
                 onSubmit={handleSmartSubmit}
                 className="flex-1 flex items-center bg-white/10 rounded-[20px] px-4 border border-white/5"
@@ -1358,23 +1428,29 @@ const App: React.FC = () => {
               <button
                 onClick={handleSmartSubmit}
                 disabled={!smartInput.trim() || isParsing}
-                className="bg-[#007AFF] text-white px-5 rounded-[20px] text-[13px] font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
+                className="bg-gradient-to-br from-[#007AFF] to-[#5856D6] text-white px-5 text-[13px] font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50 border border-white/20"
+                style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
               >
-                {isParsing ? '...' : 'Thêm'}
+                <span style={{ filter: 'none', opacity: 1, color: '#FFFFFF', fontWeight: 700 }}>
+                  {isParsing ? '...' : 'Thêm'}
+                </span>
               </button>
               <div className="w-[1px] h-6 bg-white/20 self-center mx-1"></div>
               <button
                 onClick={() => openManualModal(true)}
-                className="bg-white/10 hover:bg-white/20 text-white/80 px-4 rounded-[20px] text-[13px] font-bold active:scale-95 transition-all whitespace-nowrap"
+                className="glass-button px-4 text-[13px] font-bold active:scale-95 transition-all whitespace-nowrap"
+                style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
               >
-                Ghi bù
+                <span style={{ filter: 'none', opacity: 1, color: '#FFFFFF', fontWeight: 700 }}>
+                  Ghi bù
+                </span>
               </button>
             </div>
 
             {/* 2. SEARCH & FILTER */}
             <div className="mb-6 relative z-30">
               <div className="flex items-center gap-2 mb-2">
-                <div className="flex-1 liquid-glass-dark h-12 rounded-[20px] flex items-center px-4 border border-white/20 focus-within:bg-white/20 transition-all">
+                <div className="flex-1 glass-card-dark h-12 flex items-center px-4 border border-white/20 focus-within:bg-white/20 transition-all">
                   <svg
                     className="text-white/50 mr-3"
                     width="18"
@@ -1406,7 +1482,7 @@ const App: React.FC = () => {
                     filterDate.start ||
                     filterDate.end
                       ? 'bg-[#007AFF] text-white border-[#007AFF]'
-                      : 'liquid-glass-dark text-white/70 border-white/20'
+                      : 'glass-card-dark text-white/70 border-white/20'
                   }`}
                 >
                   <svg
@@ -1433,7 +1509,7 @@ const App: React.FC = () => {
                     activeFilterPopup === 'category' ||
                     filterCategories.length > 0
                       ? 'bg-[#FF9F0A] text-white border-[#FF9F0A]'
-                      : 'liquid-glass-dark text-white/70 border-white/20'
+                      : 'glass-card-dark text-white/70 border-white/20'
                   }`}
                 >
                   <svg
@@ -1460,7 +1536,7 @@ const App: React.FC = () => {
                     filterAmount.min ||
                     filterAmount.max
                       ? 'bg-[#34C759] text-white border-[#34C759]'
-                      : 'liquid-glass-dark text-white/70 border-white/20'
+                      : 'glass-card-dark text-white/70 border-white/20'
                   }`}
                 >
                   <svg
@@ -1477,7 +1553,7 @@ const App: React.FC = () => {
                 </button>
               </div>
               {activeFilterPopup && (
-                <div className="absolute top-full left-0 right-0 mt-2 p-4 liquid-glass-dark rounded-[24px] border border-white/20 animate-in slide-in-from-top-2 z-40 shadow-2xl backdrop-blur-xl">
+                <div className="absolute top-full left-0 right-0 mt-2 p-4 glass-card-dark border border-white/20 animate-in slide-in-from-top-2 z-40 shadow-2xl">
                   {activeFilterPopup === 'date' && (
                     <div className="space-y-3">
                       <h4 className="text-white font-bold text-[14px]">
@@ -1661,7 +1737,7 @@ const App: React.FC = () => {
             {/* LIST OR CALENDAR */}
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
               {historyViewMode === 'list' ? (
-                <div className="liquid-glass-dark rounded-[32px] overflow-hidden border border-white/20 min-h-[300px]">
+                <div className="glass-card-dark overflow-hidden border border-white/20 min-h-[300px]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
@@ -1828,7 +1904,7 @@ const App: React.FC = () => {
         {/* --- AI TAB --- */}
         {activeTab === 'ai' && (
           <div className="animate-in fade-in slide-in-from-left-10 duration-500">
-            <div className="liquid-glass p-8 rounded-[32px] bg-gradient-to-br from-[#007AFF]/20 to-[#5856D6]/20 mb-6 relative overflow-hidden min-h-[400px]">
+            <div className="glass-card p-8 bg-gradient-to-br from-[#007AFF]/20 to-[#5856D6]/20 mb-6 relative overflow-hidden min-h-[400px]">
               <div className="absolute top-8 right-8 flex bg-white/20 rounded-full p-1 border border-white/20 z-20">
                 <button
                   onClick={() => setAnalysisMode('week')}
@@ -1856,7 +1932,7 @@ const App: React.FC = () => {
                   🤖
                 </div>
                 <h2 className="text-3xl font-black">Trợ lý Tài chính</h2>
-                <p className="text-[#3A3A3C] font-semibold opacity-70 text-[15px]">
+                <p className="text-white/70 font-semibold text-[15px]">
                   Phân tích {analysisMode === 'week' ? 'Tuần này' : 'Tháng này'}{' '}
                   của bạn.
                 </p>
@@ -1889,12 +1965,12 @@ const App: React.FC = () => {
                       {dashboardData.statusLabel}
                     </div>
                   </div>
-                  <div className="bg-white/40 rounded-[24px] p-4 flex flex-col justify-center border border-white/40 shadow-sm relative overflow-hidden">
+                  <div className="glass-card p-4 flex flex-col justify-center shadow-sm relative overflow-hidden">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-2xl">
                         {dashboardData.topCategoryIcon}
                       </span>
-                      <span className="font-bold text-[14px] leading-tight text-[#1C1C1E] line-clamp-1">
+                      <span className="font-bold text-[14px] leading-tight text-white line-clamp-1">
                         {dashboardData.topCategoryName}
                       </span>
                     </div>
@@ -1903,7 +1979,7 @@ const App: React.FC = () => {
                         className={`text-[20px] font-black ${
                           dashboardData.highlightIsBad
                             ? 'text-[#FF3B30]'
-                            : 'text-[#1C1C1E]'
+                            : 'text-white'
                         }`}
                       >
                         {dashboardData.topCategoryDiffPercent > 0 ? '⬆' : '⬇'}{' '}
@@ -1912,16 +1988,16 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white/40 rounded-[24px] p-5 border border-white/40 shadow-sm mb-6 transition-all duration-500">
+                <div className="glass-card p-5 shadow-sm mb-6 transition-all duration-500">
                   <div className="flex justify-between items-end mb-2">
-                    <span className="text-[12px] font-bold text-[#3A3A3C]/60 uppercase tracking-wider">
+                    <span className="text-[12px] font-bold text-white/60 uppercase tracking-wider">
                       Tiến độ ({analysisMode === 'week' ? 'Tuần' : 'Tháng'})
                     </span>
                     <div className="text-right">
-                      <span className="font-black text-[15px] text-[#1C1C1E]">
+                      <span className="font-black text-[15px] text-white">
                         {Math.round(dashboardData.currentTotal / 1000)}k
                       </span>
-                      <span className="text-[13px] font-semibold text-[#3A3A3C]/40">
+                      <span className="text-[13px] font-semibold text-white/40">
                         {' '}
                         / {Math.round(dashboardData.budgetLimit / 1000)}k
                       </span>
@@ -1952,11 +2028,11 @@ const App: React.FC = () => {
                 </div>
                 <div className="text-center px-4 min-h-[40px] flex items-center justify-center">
                   {isLoadingAdvice && !aiForecast ? (
-                    <div className="flex gap-2 items-center text-[#1C1C1E]/50 text-[14px] font-medium animate-pulse">
+                    <div className="flex gap-2 items-center text-white/50 text-[14px] font-medium animate-pulse">
                       <span>✨</span> Đang phân tích dữ liệu...
                     </div>
                   ) : (
-                    <p className="text-[15px] font-medium text-[#1C1C1E]/70 italic leading-relaxed animate-in fade-in slide-in-from-bottom-2">
+                    <p className="text-[15px] font-medium text-white/70 italic leading-relaxed animate-in fade-in slide-in-from-bottom-2">
                       "{aiForecast || 'Chưa có đủ dữ liệu để dự báo.'}"
                     </p>
                   )}
@@ -1967,65 +2043,71 @@ const App: React.FC = () => {
         )}
       </div>
 
-      <nav className="fixed bottom-8 left-6 right-6 h-20 liquid-glass-dark rounded-[30px] flex justify-around items-center px-4 z-50">
+      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 h-16 w-[280px] backdrop-blur-xl bg-white/10 border border-white/30 rounded-[32px] flex justify-around items-center px-2 z-50 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.4)]">
         <button
           onClick={() => setActiveTab('home')}
-          className={`relative flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
-            activeTab === 'home' ? 'text-[#007AFF]' : 'text-[#007AFF] '
+          className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${
+            activeTab === 'home' ? 'text-[#007AFF]' : 'text-white/70'
           }`}
         >
           <svg
-            width="28"
-            height="28"
+            width="26"
+            height="26"
             viewBox="0 0 24 24"
             fill={activeTab === 'home' ? 'currentColor' : 'none'}
             stroke="currentColor"
             strokeWidth="2.5"
+            className="drop-shadow-none"
+            style={{ filter: 'none', opacity: 1 }}
           >
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           </svg>
           {activeTab === 'home' && (
-            <span className="absolute -bottom-1 w-1.5 h-1.5 bg-[#007AFF] rounded-full"></span>
+            <span className="absolute -bottom-1 w-1.5 h-1.5 bg-[#007AFF] rounded-full drop-shadow-[0_0_4px_rgba(0,122,255,0.6)]"></span>
           )}
         </button>
         <button
           onClick={() => setActiveTab('history')}
-          className={`relative flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
-            activeTab === 'history' ? 'text-[#007AFF]' : 'text-[#3A3A3C] '
+          className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${
+            activeTab === 'history' ? 'text-[#007AFF]' : 'text-white/70'
           }`}
         >
           <svg
-            width="28"
-            height="28"
+            width="26"
+            height="26"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="2.5"
+            className="drop-shadow-none"
+            style={{ filter: 'none', opacity: 1 }}
           >
             <path d="M12 20V10M18 20V4M6 20v-4" />
           </svg>
           {activeTab === 'history' && (
-            <span className="absolute -bottom-1 w-1.5 h-1.5 bg-[#007AFF] rounded-full"></span>
+            <span className="absolute -bottom-1 w-1.5 h-1.5 bg-[#007AFF] rounded-full drop-shadow-[0_0_4px_rgba(0,122,255,0.6)]"></span>
           )}
         </button>
         <button
           onClick={() => setActiveTab('ai')}
-          className={`relative flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
-            activeTab === 'ai' ? 'text-[#007AFF]' : 'text-white '
+          className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${
+            activeTab === 'ai' ? 'text-[#007AFF]' : 'text-white/70'
           }`}
         >
           <svg
-            width="28"
-            height="28"
+            width="26"
+            height="26"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="2.5"
+            className="drop-shadow-none"
+            style={{ filter: 'none', opacity: 1 }}
           >
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
           </svg>
           {activeTab === 'ai' && (
-            <span className="absolute -bottom-1 w-1.5 h-1.5 bg-[#007AFF] rounded-full"></span>
+            <span className="absolute -bottom-1 w-1.5 h-1.5 bg-[#007AFF] rounded-full drop-shadow-[0_0_4px_rgba(0,122,255,0.6)]"></span>
           )}
         </button>
       </nav>
@@ -2037,25 +2119,25 @@ const App: React.FC = () => {
             className="absolute inset-0 bg-black/40 backdrop-blur-md"
             onClick={resetModal}
           />
-          <div className="relative liquid-glass w-full rounded-t-[45px] p-6 pb-12 shadow-2xl animate-in slide-in-from-bottom-full duration-500 max-h-[90vh] overflow-y-auto no-scrollbar">
-            <div className="w-12 h-1.5 bg-black/10 rounded-full mx-auto mb-6" />
-            <div className="flex bg-black/5 p-1.5 rounded-[20px] mb-6 relative">
+          <div className="relative glass-card w-full rounded-t-[45px] p-6 pb-12 shadow-2xl animate-in slide-in-from-bottom-full duration-500 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6" />
+            <div className="flex glass-button p-1.5 mb-6 relative">
               <button
                 onClick={() => setInputMode('manual')}
-                className={`flex-1 py-3 rounded-[16px] text-[15px] font-bold transition-all z-10 ${
+                className={`flex-1 py-3 text-[15px] font-bold transition-all z-10 ${
                   inputMode === 'manual'
-                    ? 'bg-white shadow-sm text-black'
-                    : 'text-black/50'
+                    ? 'glass-card shadow-sm text-white'
+                    : 'text-white/50'
                 }`}
               >
                 Thủ công
               </button>
               <button
                 onClick={() => setInputMode('ai')}
-                className={`flex-1 py-3 rounded-[16px] text-[15px] font-bold transition-all z-10 ${
+                className={`flex-1 py-3 text-[15px] font-bold transition-all z-10 ${
                   inputMode === 'ai'
-                    ? 'bg-white shadow-sm text-black'
-                    : 'text-black/50'
+                    ? 'glass-card shadow-sm text-white'
+                    : 'text-white/50'
                 }`}
               >
                 AI Scan ✨
@@ -2064,36 +2146,42 @@ const App: React.FC = () => {
             {inputMode === 'ai' ? (
               <form onSubmit={handleSmartSubmit} className="space-y-6">
                 <div className="text-center">
-                  <h3 className="text-2xl font-black mb-1">
+                  <h3 className="text-2xl font-black mb-1 text-white">
                     Ghi chép siêu tốc
                   </h3>
-                  <p className="text-slate-500 font-bold text-[14px]">
+                  <p className="text-white/60 font-bold text-[14px]">
                     Gemini đang lắng nghe bạn...
                   </p>
                 </div>
-                <div className="bg-white/40 p-6 rounded-[28px] border border-white/60 shadow-inner">
+                <div className="glass-card p-6 shadow-inner">
                   <textarea
                     autoFocus
                     value={smartInput}
                     onChange={(e) => setSmartInput(e.target.value)}
                     placeholder="Ví dụ: Cà phê sáng 35k..."
-                    className="w-full bg-transparent border-none focus:ring-0 text-[20px] text-[#1C1C1E] font-bold placeholder:opacity-30 resize-none min-h-[120px]"
+                    className="w-full bg-transparent border-none focus:ring-0 text-[20px] text-white font-bold placeholder:text-white/30 resize-none min-h-[120px]"
                   />
                 </div>
                 <div className="flex gap-4">
                   <button
                     type="button"
                     onClick={resetModal}
-                    className="flex-1 bg-black/5 py-5 rounded-[24px] font-bold text-[#1C1C1E] active:scale-95 transition-all"
+                    className="flex-1 glass-button py-5 font-bold active:scale-95 transition-all"
+                    style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                   >
-                    Đóng
+                    <span style={{ filter: 'none', opacity: 1, color: '#FFFFFF', fontWeight: 700 }}>
+                      Đóng
+                    </span>
                   </button>
                   <button
                     type="submit"
                     disabled={isParsing || !smartInput.trim()}
-                    className="flex-[2] bg-[#007AFF] text-white py-5 rounded-[24px] font-black text-[18px] shadow-xl shadow-blue-500/30 active:scale-95 transition-all border border-white/30 disabled:opacity-50"
+                    className="flex-[2] bg-gradient-to-br from-[#007AFF] to-[#5856D6] text-white py-5 font-black text-[18px] shadow-xl shadow-blue-500/30 active:scale-95 transition-all border border-white/30 disabled:opacity-50"
+                    style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                   >
-                    {isParsing ? 'Đang phân tích...' : 'Xác nhận'}
+                    <span style={{ filter: 'none', opacity: 1, color: '#FFFFFF', fontWeight: 900 }}>
+                      {isParsing ? 'Đang phân tích...' : 'Xác nhận'}
+                    </span>
                   </button>
                 </div>
               </form>
@@ -2109,30 +2197,33 @@ const App: React.FC = () => {
                           : TransactionType.EXPENSE
                       )
                     }
-                    className={`w-16 h-16 rounded-[20px] flex items-center justify-center text-2xl font-bold transition-all shadow-sm border border-white/40 ${
+                    className={`w-16 h-16 rounded-[20px] flex items-center justify-center text-2xl font-black transition-all shadow-sm border border-white/40 ${
                       manualType === TransactionType.EXPENSE
                         ? 'bg-[#FF3B30]/10 text-[#FF3B30]'
                         : 'bg-[#34C759]/10 text-[#34C759]'
                     }`}
+                    style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                   >
-                    {manualType === TransactionType.EXPENSE ? '-' : '+'}
+                    <span style={{ filter: 'none', opacity: 1, fontWeight: 900 }}>
+                      {manualType === TransactionType.EXPENSE ? '-' : '+'}
+                    </span>
                   </button>
-                  <div className="flex-1 bg-white/40 rounded-[20px] px-6 flex items-center border border-white/50 focus-within:bg-white/60 transition-all">
+                  <div className="flex-1 glass-card px-6 flex items-center focus-within:bg-white/20 transition-all">
                     <input
                       type="number"
                       placeholder="0"
                       value={manualAmount}
                       onChange={(e) => setManualAmount(e.target.value)}
-                      className="w-full bg-transparent border-none focus:ring-0 text-[32px] font-black text-[#1C1C1E] placeholder:text-black/10"
+                      className="w-full bg-transparent border-none focus:ring-0 text-[32px] font-black text-white placeholder:text-white/20"
                       autoFocus
                     />
-                    <span className="text-[20px] font-bold text-black/40">
+                    <span className="text-[20px] font-bold text-white/60">
                       đ
                     </span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-[13px] font-bold text-black/40 uppercase tracking-wider ml-1">
+                  <p className="text-[13px] font-bold text-white/60 uppercase tracking-wider ml-1">
                     Nguồn tiền
                   </p>
                   <div className="flex gap-2">
@@ -2142,7 +2233,7 @@ const App: React.FC = () => {
                       className={`flex-1 py-3 rounded-[18px] text-[14px] font-bold transition-all border ${
                         manualSource === 'cash'
                           ? 'bg-[#34C759] text-white border-[#34C759] shadow-lg shadow-green-500/30'
-                          : 'bg-white/20 text-black/40 border-transparent hover:bg-white/30'
+                          : 'glass-button text-white/60 border-transparent hover:bg-white/20'
                       }`}
                     >
                       💵 Tiền mặt
@@ -2153,7 +2244,7 @@ const App: React.FC = () => {
                       className={`flex-1 py-3 rounded-[18px] text-[14px] font-bold transition-all border ${
                         manualSource === 'bank'
                           ? 'bg-[#007AFF] text-white border-[#007AFF] shadow-lg shadow-blue-500/30'
-                          : 'bg-white/20 text-black/40 border-transparent hover:bg-white/30'
+                          : 'glass-button text-white/60 border-transparent hover:bg-white/20'
                       }`}
                     >
                       💳 Ngân hàng
@@ -2164,7 +2255,7 @@ const App: React.FC = () => {
                       className={`flex-1 py-3 rounded-[18px] text-[14px] font-bold transition-all border ${
                         manualSource === 'momo'
                           ? 'bg-[#FF2D55] text-white border-[#FF2D55] shadow-lg shadow-pink-500/30'
-                          : 'bg-white/20 text-black/40 border-transparent hover:bg-white/30'
+                          : 'glass-button text-white/60 border-transparent hover:bg-white/20'
                       }`}
                     >
                       🦄 Ví Momo
@@ -2172,7 +2263,7 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-[13px] font-bold text-black/40 uppercase tracking-wider ml-1">
+                  <p className="text-[13px] font-bold text-white/60 uppercase tracking-wider ml-1">
                     Danh mục
                   </p>
                   <div className="grid grid-cols-4 gap-3">
@@ -2181,18 +2272,18 @@ const App: React.FC = () => {
                         key={cat.id}
                         type="button"
                         onClick={() => setManualCatId(cat.id)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-[20px] transition-all border ${
+                        className={`flex flex-col items-center justify-center p-3 transition-all border ${
                           manualCatId === cat.id
-                            ? 'bg-white shadow-md border-white scale-105'
-                            : 'bg-white/20 border-transparent hover:bg-white/30'
+                            ? 'glass-card shadow-md border-white/40 scale-105'
+                            : 'glass-button border-transparent hover:bg-white/20'
                         }`}
                       >
                         <span className="text-2xl mb-1">{cat.icon}</span>
                         <span
                           className={`text-[10px] font-bold ${
                             manualCatId === cat.id
-                              ? 'text-black'
-                              : 'text-black/50'
+                              ? 'text-white'
+                              : 'text-white/60'
                           }`}
                         >
                           {cat.name}
@@ -2202,16 +2293,16 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-[13px] font-bold text-black/40 uppercase tracking-wider ml-1">
+                  <p className="text-[13px] font-bold text-white/60 uppercase tracking-wider ml-1">
                     Thời gian
                   </p>
                   <div className="flex gap-3">
-                    <div className="flex-1 bg-white/40 rounded-[20px] px-4 py-3 flex items-center border border-white/50">
+                    <div className="flex-1 glass-card px-4 py-3 flex items-center">
                       <input
                         type="date"
                         value={manualDate}
                         onChange={(e) => setManualDate(e.target.value)}
-                        className="w-full bg-transparent border-none focus:ring-0 text-[16px] font-bold text-[#1C1C1E]"
+                        className="w-full bg-transparent border-none focus:ring-0 text-[16px] font-bold text-white"
                       />
                     </div>
                     <button
@@ -2225,28 +2316,34 @@ const App: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <div className="bg-white/40 rounded-[24px] px-5 py-4 border border-white/50">
+                <div className="glass-card px-5 py-4">
                   <input
                     type="text"
                     placeholder="Ghi chú (tùy chọn)"
                     value={manualNote}
                     onChange={(e) => setManualNote(e.target.value)}
-                    className="w-full bg-transparent border-none focus:ring-0 text-[16px] font-medium text-[#1C1C1E] placeholder:text-black/30"
+                    className="w-full bg-transparent border-none focus:ring-0 text-[16px] font-medium text-white placeholder:text-white/30"
                   />
                 </div>
                 <div className="flex gap-4 pt-2">
                   <button
                     type="button"
                     onClick={resetModal}
-                    className="flex-1 bg-black/5 py-4 rounded-[24px] font-bold text-[#1C1C1E] active:scale-95 transition-all"
+                    className="flex-1 glass-button py-4 font-bold active:scale-95 transition-all"
+                    style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                   >
-                    Đóng
+                    <span style={{ filter: 'none', opacity: 1, color: '#FFFFFF', fontWeight: 700 }}>
+                      Đóng
+                    </span>
                   </button>
                   <button
                     type="submit"
-                    className="flex-[2] bg-[#007AFF] text-white py-4 rounded-[24px] font-black text-[18px] shadow-xl shadow-blue-500/30 active:scale-95 transition-all border border-white/30"
+                    className="flex-[2] bg-gradient-to-br from-[#007AFF] to-[#5856D6] text-white py-4 font-black text-[18px] shadow-xl shadow-blue-500/30 active:scale-95 transition-all border border-white/30"
+                    style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                   >
-                    Lưu
+                    <span style={{ filter: 'none', opacity: 1, color: '#FFFFFF', fontWeight: 900 }}>
+                      Lưu
+                    </span>
                   </button>
                 </div>
               </form>
@@ -2261,23 +2358,23 @@ const App: React.FC = () => {
             className="absolute inset-0 bg-black/60 backdrop-blur-md"
             onClick={() => setIsBudgetModalOpen(false)}
           />
-          <div className="relative liquid-glass w-full rounded-t-[45px] p-6 pb-12 shadow-2xl animate-in slide-in-from-bottom-full duration-500 max-h-[85vh] overflow-y-auto no-scrollbar">
+          <div className="relative glass-card w-full rounded-t-[45px] p-6 pb-12 shadow-2xl animate-in slide-in-from-bottom-full duration-500 max-h-[85vh] overflow-y-auto no-scrollbar">
             <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6" />
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-black text-[#1C1C1E]">
+              <h3 className="text-2xl font-black text-white">
                 Thiết lập Vốn đầu tháng
               </h3>
-              <p className="text-[#3A3A3C] opacity-60 font-medium text-[14px]">
+              <p className="text-white/60 font-medium text-[14px]">
                 Nhập số tiền bạn đang có ở từng nguồn.
               </p>
             </div>
             <form onSubmit={handleSaveBudgetConfig} className="space-y-6">
-              <div className="bg-white/40 rounded-[24px] p-4 flex items-center border border-white/50">
+              <div className="glass-card p-4 flex items-center">
                 <div className="w-12 h-12 rounded-2xl bg-[#34C759]/10 flex items-center justify-center text-2xl mr-4 shadow-sm">
                   💵
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[12px] font-bold text-black/40 uppercase tracking-wider mb-1">
+                  <label className="block text-[12px] font-bold text-white/60 uppercase tracking-wider mb-1">
                     Tiền mặt
                   </label>
                   <input
@@ -2290,16 +2387,16 @@ const App: React.FC = () => {
                       })
                     }
                     placeholder="0"
-                    className="w-full bg-transparent border-none p-0 text-[20px] font-black text-[#1C1C1E] placeholder:text-black/10 focus:ring-0"
+                    className="w-full bg-transparent border-none p-0 text-[20px] font-black text-white placeholder:text-white/20 focus:ring-0"
                   />
                 </div>
               </div>
-              <div className="bg-white/40 rounded-[24px] p-4 flex items-center border border-white/50">
+              <div className="glass-card p-4 flex items-center">
                 <div className="w-12 h-12 rounded-2xl bg-[#007AFF]/10 flex items-center justify-center text-2xl mr-4 shadow-sm">
                   💳
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[12px] font-bold text-black/40 uppercase tracking-wider mb-1">
+                  <label className="block text-[12px] font-bold text-white/60 uppercase tracking-wider mb-1">
                     Ngân hàng
                   </label>
                   <input
@@ -2312,16 +2409,16 @@ const App: React.FC = () => {
                       })
                     }
                     placeholder="0"
-                    className="w-full bg-transparent border-none p-0 text-[20px] font-black text-[#1C1C1E] placeholder:text-black/10 focus:ring-0"
+                    className="w-full bg-transparent border-none p-0 text-[20px] font-black text-white placeholder:text-white/20 focus:ring-0"
                   />
                 </div>
               </div>
-              <div className="bg-white/40 rounded-[24px] p-4 flex items-center border border-white/50">
+              <div className="glass-card p-4 flex items-center">
                 <div className="w-12 h-12 rounded-2xl bg-[#FF2D55]/10 flex items-center justify-center text-2xl mr-4 shadow-sm">
                   📱
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[12px] font-bold text-black/40 uppercase tracking-wider mb-1">
+                  <label className="block text-[12px] font-bold text-white/60 uppercase tracking-wider mb-1">
                     Ví điện tử
                   </label>
                   <input
@@ -2334,15 +2431,18 @@ const App: React.FC = () => {
                       })
                     }
                     placeholder="0"
-                    className="w-full bg-transparent border-none p-0 text-[20px] font-black text-[#1C1C1E] placeholder:text-black/10 focus:ring-0"
+                    className="w-full bg-transparent border-none p-0 text-[20px] font-black text-white placeholder:text-white/20 focus:ring-0"
                   />
                 </div>
               </div>
               <button
                 type="submit"
-                className="w-full bg-[#1C1C1E] text-white py-5 rounded-[24px] font-black text-[18px] shadow-xl shadow-black/20 active:scale-95 transition-all mt-4"
+                className="w-full bg-gradient-to-br from-[#007AFF] to-[#5856D6] text-white py-5 rounded-[24px] font-black text-[18px] shadow-xl shadow-blue-500/30 active:scale-95 transition-all mt-4 border border-white/20"
+                style={{ filter: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
               >
-                Lưu thiết lập
+                <span style={{ filter: 'none', opacity: 1, color: '#FFFFFF', fontWeight: 900 }}>
+                  Lưu thiết lập
+                </span>
               </button>
             </form>
           </div>
